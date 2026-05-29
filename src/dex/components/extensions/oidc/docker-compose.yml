@@ -1,0 +1,42 @@
+services:
+  dex:
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    configs:
+      - source: dex-config
+        target: /etc/dex/config.yaml
+configs:
+  dex-config:
+    content: |
+      issuer: ${DEX_ISSUER}
+
+      storage:
+        type: sqlite3
+        config:
+          file: /var/dex/dex.db
+
+      web:
+        http: 0.0.0.0:5556
+
+      oauth2:
+        responseTypes:
+          - code
+        skipApprovalScreen: true
+
+      staticClients:
+        - id: o2-client
+          redirectURIs:
+            - ${DEX_O2_CLIENT_REDIRECT_URL}
+          name: ${DEX_O2_CLIENT_NAME}
+          secret: ${DEX_O2_CLIENT_SECRET}
+
+      connectors:
+        - type: oidc
+          id: ${DEX_OIDC_ID}
+          name: ${DEX_OIDC_NAME}
+          config:
+            issuer: ${DEX_OIDC_ISSUER}
+            clientID: ${DEX_OIDC_CLIENT_ID}
+            clientSecret: "${DEX_OIDC_CLIENT_SECRET}"
+            redirectURI: ${DEX_OIDC_REDIRECT_URL}
+            scopes: ${DEX_OIDC_SCOPES}
+            insecureSkipEmailVerified: ${DEX_OIDC_INSECURE_SKIP_EMAIL_VERIFIED:-true}

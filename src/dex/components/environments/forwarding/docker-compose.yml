@@ -1,0 +1,4 @@
+services:
+  dex:
+    ports:
+      - 5556:5556
